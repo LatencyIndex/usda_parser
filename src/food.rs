@@ -2,7 +2,7 @@
 
 pub mod units;
 
-use serde_json as sjson;
+use serde_json as sj;
 use std::{collections::BTreeMap, fmt};
 use units::{Quantity, Unit};
 
@@ -23,14 +23,14 @@ impl fmt::Display for Food {
     }
 }
 
-fn as_nutrient(x: &sjson::Value) -> Option<(String, Quantity)> {
+fn as_nutrient(x: &sj::Value) -> Option<(String, Quantity)> {
     let amount = x["amount"].as_f64()?;
     let name = x["nutrient"]["name"].as_str()?.trim().to_string();
     let unit = x["nutrient"]["unitName"].as_str()?.trim().parse().ok()?;
     Some((name, Quantity { amount, unit }))
 }
 
-pub fn as_food(x: &sjson::Value) -> Option<Food> {
+pub fn as_food(x: &sj::Value) -> Option<Food> {
     let name = x["description"].as_str()?.trim().to_string();
     let mut nutrients = BTreeMap::new();
     for (k, v) in x["foodNutrients"]
