@@ -53,17 +53,17 @@ fn contains_any(needles: &Vec<&str>, haystack: &str) -> bool {
 
 fn is_essential_amino_acid(nutrient: &str) -> bool {
     let aminos = vec![
+        "cysteine",
+        "cystine",
         "histidine",
         "isoleucine",
         "leucine",
         "lysine",
         "methionine",
-        "cysteine",
-        "cystine",
         "phenylalanine",
-        "tyrosine",
         "threonine",
         "tryptophan",
+        "tyrosine",
         "valine",
     ];
     contains_any(&aminos, &nutrient.to_lowercase())
