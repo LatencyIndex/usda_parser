@@ -72,6 +72,13 @@ pub struct Module {
 }
 
 impl Module {
+    /// Convenience method for the needed internal &[&str] to Vec<String> conversion.
+    pub fn new(name: &[&str], foods: Vec<Food>) -> Module {
+        Module {
+            name: name.iter().map(|x| x.to_string()).collect(),
+            foods,
+        }
+    }
     pub fn write_source_file<P: AsRef<Path>>(&self, root: P) {
         let path = root.as_ref().join(self.name.iter().collect::<PathBuf>());
         let dirs = path
