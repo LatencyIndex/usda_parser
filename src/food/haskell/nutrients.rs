@@ -1,8 +1,8 @@
 //! Translate nutrients from how they are given by the USDA json, to how the Haskell code needs them.
 
-use crate::algorithm::get_first;
 use crate::food::rust::Food as RustFood;
 use crate::food::units::{add_opt_qs, Quantity, Unit::Microgram};
+use crate::lsl::algorithm::get_first;
 use std::collections::BTreeMap;
 
 // Use RustFood argument even though only nutrients are needed,
