@@ -59,14 +59,14 @@ impl Quantity {
     pub fn convert_to(&self, unit: &Unit) -> Quantity {
         use Unit::*;
         match (&self.unit, unit) {
-            (Gram, Milligram)        => Quantity {amount: self.amount * 1e+3,  unit: Milligram},
-            (Gram, Microgram)        => Quantity {amount: self.amount * 1e+6,  unit: Microgram},
-            (Milligram, Gram)        => Quantity {amount: self.amount * 1e-3,  unit: Gram},
-            (Milligram, Microgram)   => Quantity {amount: self.amount * 1e+3,  unit: Microgram},
-            (Microgram, Gram)        => Quantity {amount: self.amount * 1e-6,  unit: Gram},
-            (Microgram, Milligram)   => Quantity {amount: self.amount * 1e-3,  unit: Milligram},
-            (Kilojoule, Kilocalorie) => Quantity {amount: self.amount * 0.239, unit: Kilocalorie},
-            (Kilocalorie, Kilojoule) => Quantity {amount: self.amount * 4.184, unit: Kilojoule},
+            (Gram, Milligram)        => Quantity {amount: self.amount * 1e+3,       unit: Milligram},
+            (Gram, Microgram)        => Quantity {amount: self.amount * 1e+6,       unit: Microgram},
+            (Milligram, Gram)        => Quantity {amount: self.amount * 1e-3,       unit: Gram},
+            (Milligram, Microgram)   => Quantity {amount: self.amount * 1e+3,       unit: Microgram},
+            (Microgram, Gram)        => Quantity {amount: self.amount * 1e-6,       unit: Gram},
+            (Microgram, Milligram)   => Quantity {amount: self.amount * 1e-3,       unit: Milligram},
+            (Kilojoule, Kilocalorie) => Quantity {amount: self.amount * 0.23900574, unit: Kilocalorie},
+            (Kilocalorie, Kilojoule) => Quantity {amount: self.amount * 4.184,      unit: Kilojoule},
             (u, w) =>   if u == w {
                           self.clone()
                         } else if self.amount == 0.0 {
