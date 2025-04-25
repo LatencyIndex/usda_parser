@@ -56,27 +56,47 @@ pub struct Quantity {
 
 impl Quantity {
     #[rustfmt::skip]
-    pub fn convert_to(&self, unit: &Unit) -> Option<Quantity> {
+    pub fn convert_to(&self, unit: &Unit) -> Quantity {
         use Unit::*;
         match (&self.unit, unit) {
-            (u, w) if u == w         => Some(self.clone()),
-            (Gram, Milligram)        => Some(Quantity {amount: self.amount * 1e+3,  unit: Milligram}),
-            (Gram, Microgram)        => Some(Quantity {amount: self.amount * 1e+6,  unit: Microgram}),
-            (Milligram, Gram)        => Some(Quantity {amount: self.amount * 1e-3,  unit: Gram}),
-            (Milligram, Microgram)   => Some(Quantity {amount: self.amount * 1e+3,  unit: Microgram}),
-            (Microgram, Gram)        => Some(Quantity {amount: self.amount * 1e-6,  unit: Gram}),
-            (Microgram, Milligram)   => Some(Quantity {amount: self.amount * 1e-3,  unit: Milligram}),
-            (Kilojoule, Kilocalorie) => Some(Quantity {amount: self.amount * 0.239, unit: Kilocalorie}),
-            (Kilocalorie, Kilojoule) => Some(Quantity {amount: self.amount * 4.184, unit: Kilojoule}),
-            _ => None,
+            (Gram, Milligram)        => Quantity {amount: self.amount * 1e+3,  unit: Milligram},
+            (Gram, Microgram)        => Quantity {amount: self.amount * 1e+6,  unit: Microgram},
+            (Milligram, Gram)        => Quantity {amount: self.amount * 1e-3,  unit: Gram},
+            (Milligram, Microgram)   => Quantity {amount: self.amount * 1e+3,  unit: Microgram},
+            (Microgram, Gram)        => Quantity {amount: self.amount * 1e-6,  unit: Gram},
+            (Microgram, Milligram)   => Quantity {amount: self.amount * 1e-3,  unit: Milligram},
+            (Kilojoule, Kilocalorie) => Quantity {amount: self.amount * 0.239, unit: Kilocalorie},
+            (Kilocalorie, Kilojoule) => Quantity {amount: self.amount * 4.184, unit: Kilojoule},
+            (u, w) =>   if u == w {
+                          self.clone()
+                        } else if self.amount == 0.0 {
+                            Quantity {amount: self.amount, unit: unit.clone()}
+                        } else {
+                            panic!("cannot convert units {u} to {w}")
+                        },
         }
     }
 
     #[allow(non_snake_case)]
-    pub fn from_IU(&self, amount_per_IU: Quantity) -> Option<Quantity> {
+    pub fn from_IU(&self, amount_per_IU: Quantity) -> Quantity {
         match self.unit {
-            Unit::InternationalUnit => Some(amount_per_IU * self.amount),
-            _ => None,
+            Unit::InternationalUnit => amount_per_IU * self.amount,
+            _ => panic!("called from_IU on non-IU unit {}", self.unit),
+        }
+    }
+}
+
+impl fmt::Display for Quantity {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{} {}", self.amount, self.unit)
+    }
+}
+
+impl std::default::Default for Quantity {
+    fn default() -> Self {
+        Quantity {
+            amount: 0.0,
+            unit: Unit::Gram,
         }
     }
 }
@@ -99,17 +119,33 @@ impl std::ops::Div<f64> for Quantity {
 }
 
 impl std::ops::Add<Quantity> for Quantity {
-    type Output = Option<Quantity>;
-    fn add(self, other: Quantity) -> Option<Quantity> {
-        other.convert_to(&self.unit).map(|x| Quantity {
-            amount: x.amount + self.amount,
-            unit: x.unit,
-        })
+    type Output = Quantity;
+    fn add(self, rhs: Quantity) -> Quantity {
+        if self.amount == 0.0 {
+            rhs
+        } else if rhs.amount == 0.0 {
+            self
+        } else {
+            Quantity {
+                amount: self.amount + rhs.convert_to(&self.unit).amount,
+                unit: self.unit,
+            }
+        }
     }
 }
 
-impl fmt::Display for Quantity {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{} {}", self.amount, self.unit)
+impl std::ops::AddAssign for Quantity {
+    fn add_assign(&mut self, rhs: Self) {
+        *self = self.clone() + rhs;
+    }
+}
+
+impl std::iter::Sum for Quantity {
+    fn sum<I: Iterator<Item = Self>>(iter: I) -> Self {
+        let mut acc: Quantity = Quantity::default();
+        for q in iter {
+            acc += q;
+        }
+        acc
     }
 }
