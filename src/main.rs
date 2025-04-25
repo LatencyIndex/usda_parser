@@ -25,7 +25,7 @@ fn main() {
         // Create and chain iterators in one step.
         // Unwrap because failure to create an iterator should panic
         .flat_map(|s| usda::JsonIter::new(s).unwrap())
-        .filter_map(|json_val| rust::as_food(&json_val));
+        .filter_map(|json_val| rust::to_food(&json_val));
 
     let mut out = BufWriter::new(fs::File::create_new("data/processed/test.txt").unwrap());
     for food in foods {

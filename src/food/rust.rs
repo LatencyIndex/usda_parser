@@ -28,7 +28,7 @@ fn as_nutrient(x: &sj::Value) -> Option<(String, Quantity)> {
     Some((name, Quantity { amount, unit }))
 }
 
-pub fn as_food(x: &sj::Value) -> Option<Food> {
+pub fn to_food(x: &sj::Value) -> Option<Food> {
     let name = x["description"].as_str()?.trim().to_string();
     let mut nutrients = BTreeMap::new();
     for (k, v) in x["foodNutrients"]
