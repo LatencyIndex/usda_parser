@@ -1,11 +1,10 @@
 //! Module for exploring the USDA food nutrient data.
 
-use crate::food;
+use crate::{
+    algorithm::contains_any,
+    food::{units::Unit, Food},
+};
 use std::collections::BTreeSet;
-
-fn contains_any(needles: &[&str], haystack: &str) -> bool {
-    needles.iter().any(|needle| haystack.contains(needle))
-}
 
 fn is_essential_amino_acid(nutrient: &str) -> bool {
     const AMINOS: [&str; 11] = [
@@ -24,23 +23,23 @@ fn is_essential_amino_acid(nutrient: &str) -> bool {
     contains_any(&AMINOS, &nutrient.to_lowercase())
 }
 
-pub fn has_amino_profile(food: &food::Food) -> bool {
+pub fn has_amino_profile(food: &Food) -> bool {
     food.nutrients.keys().any(|x| is_essential_amino_acid(x))
 }
 
-pub fn unique_nutrients(foods: impl Iterator<Item = food::Food>) -> BTreeSet<String> {
+pub fn unique_nutrients(foods: impl Iterator<Item = Food>) -> BTreeSet<String> {
     foods
         .flat_map(|f| f.nutrients.keys().cloned().collect::<Vec<String>>())
         .collect()
 }
 
-pub fn unique_units(foods: impl Iterator<Item = food::Food>) -> BTreeSet<food::Unit> {
+pub fn unique_units(foods: impl Iterator<Item = Food>) -> BTreeSet<Unit> {
     foods
         .flat_map(|f| {
             f.nutrients
                 .values()
                 .map(|v| v.unit.clone())
-                .collect::<Vec<food::Unit>>()
+                .collect::<Vec<Unit>>()
         })
         .collect()
 }
