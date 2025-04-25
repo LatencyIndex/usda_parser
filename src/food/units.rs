@@ -141,12 +141,6 @@ impl std::ops::Add<Quantity> for Quantity {
     }
 }
 
-impl std::ops::AddAssign for Quantity {
-    fn add_assign(&mut self, rhs: Self) {
-        *self = self.clone() + rhs;
-    }
-}
-
 impl std::iter::Sum for Quantity {
     fn sum<I: Iterator<Item = Self>>(iter: I) -> Self {
         iter.fold(Quantity::default(), std::ops::Add::add)
