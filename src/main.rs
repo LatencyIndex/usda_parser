@@ -1,8 +1,20 @@
 use riddle_of_protein as rp;
 use std::{
+    collections::BTreeSet,
     fs,
     io::{BufWriter, Write},
 };
+
+// TODO: list matching foods and their nutrients as haskell
+
+// Sorted list of all unique nutrient names in the collection of foods.
+#[allow(unused)]
+fn unique_nutrients(foods: impl Iterator<Item = rp::Food>) -> Vec<String> {
+    let nutrients: BTreeSet<String> = foods
+        .flat_map(|f| f.nutrients.into_iter().map(|n| n.name))
+        .collect();
+    nutrients.into_iter().collect()
+}
 
 fn main() {
     // Load all the food data as String (its json representation is too big for RAM)
