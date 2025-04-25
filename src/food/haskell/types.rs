@@ -42,11 +42,11 @@ pub struct Module {
 }
 
 impl Module {
-    pub fn to_source_file<P: AsRef<Path>>(&self, root: P) {
+    pub fn write_source_file<P: AsRef<Path>>(&self, root: P) {
         let path = root.as_ref().join(self.name.iter().collect::<PathBuf>());
         let dirs = path
             .parent()
-            .expect("Module name must have at least one element, but it had none.");
+            .expect("module name must have at least one element, but it had none");
         std::fs::create_dir_all(dirs).unwrap();
         std::fs::write(path.with_extension("hs"), self.as_haskell(0)).unwrap();
     }
