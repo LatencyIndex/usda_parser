@@ -149,11 +149,7 @@ impl std::ops::AddAssign for Quantity {
 
 impl std::iter::Sum for Quantity {
     fn sum<I: Iterator<Item = Self>>(iter: I) -> Self {
-        let mut acc: Quantity = Quantity::default();
-        for q in iter {
-            acc += q;
-        }
-        acc
+        iter.fold(Quantity::default(), std::ops::Add::add)
     }
 }
 
