@@ -1,8 +1,17 @@
 //! Module for parsing the USDA food data json files and interpreting them as food and nutrient data.
 
-use crate::food::units::{Quantity, Unit};
+use crate::food::{
+    haskell::{
+        nutrients::{derive_calories, derive_nutrients},
+        types::{Food, HsId, Month},
+    },
+    units::{Quantity, Unit},
+};
 use serde_json as sj;
-use std::{collections::BTreeMap, path::Path};
+use std::{
+    collections::{BTreeMap, BTreeSet},
+    path::Path,
+};
 
 /// Discard the string outside of and including the outer-most pair of []
 fn trim_to_brackets(s: &str) -> Option<&str> {
@@ -146,6 +155,38 @@ pub fn load_files<P: AsRef<Path>>(paths: &[P]) -> BTreeMap<String, Nutrients> {
         update_foods(&mut acc, foods);
     }
     acc
+}
+
+pub trait FoodDB {
+    fn get_hs_food(
+        &self,
+        db_name: &str,
+        haskell_name: HsId,
+        human_name: &str,
+        edible: bool,
+        season: BTreeSet<Month>,
+    ) -> Food;
+}
+
+impl FoodDB for BTreeMap<String, Nutrients> {
+    fn get_hs_food(
+        &self,
+        db_name: &str,
+        haskell_name: HsId,
+        human_name: &str,
+        edible: bool,
+        season: BTreeSet<Month>,
+    ) -> Food {
+        let nutrients = &self[db_name];
+        Food {
+            haskell_name,
+            human_name: human_name.to_string(),
+            edible,
+            season,
+            calories: derive_calories(nutrients),
+            nutrients: derive_nutrients(nutrients),
+        }
+    }
 }
 
 #[cfg(test)]

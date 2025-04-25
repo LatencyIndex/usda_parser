@@ -1,5 +1,6 @@
-use crate::food::{haskell::serialization::AsHaskell, units::Quantity, usda::Nutrients};
-use std::collections::BTreeSet;
+use crate::food::{haskell::serialization::AsHaskell, units::Quantity};
+use std::collections::{BTreeMap, BTreeSet};
+use std::fmt::Display;
 use std::path::{Path, PathBuf};
 
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
@@ -23,9 +24,38 @@ pub fn perennial() -> BTreeSet<Month> {
     BTreeSet::from([Jan, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dec])
 }
 
+/// A Haskell value identifier.
+#[derive(Clone)]
+pub struct HsId {
+    name: String,
+}
+
+impl HsId {
+    /// Panics if the name is not a valid Haskell identifier.
+    /// Must be non-empty, start with an ascii lowercase letter,
+    /// and contain only ascii alphanumeric characters and underscores.
+    pub fn new(name: &str) -> HsId {
+        fn is_valid_char(c: char) -> bool {
+            c.is_ascii_alphanumeric() || c == '_'
+        }
+        assert!(!name.is_empty());
+        assert!(name.chars().next().is_some_and(|c| c.is_ascii_lowercase()));
+        assert!(name.chars().all(is_valid_char));
+        HsId {
+            name: name.to_string(),
+        }
+    }
+}
+
+impl Display for HsId {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        self.name.fmt(f)
+    }
+}
+
 pub struct Food {
-    pub haskell_name: String, // Name of the haskell variable representing this food.
-    pub human_name: String,   // Name used when e.g. printing the food for an end-user.
+    pub haskell_name: HsId, // Name of the haskell variable representing this food.
+    pub human_name: String, // Name used when e.g. printing the food for an end-user.
     pub edible: bool,
     // The food database contains basic ingredients (e.g. rice, carrots, pasta..)
     // and not cooked dishes or recipes, so these fields are omitted/left empty.
@@ -33,7 +63,7 @@ pub struct Food {
     // recipe :: T.Text,
     pub season: BTreeSet<Month>, // Which months of the year the food is in season.
     pub calories: Option<Quantity>,
-    pub nutrients: Nutrients,
+    pub nutrients: BTreeMap<String, Quantity>,
 }
 
 pub struct Module {
