@@ -101,13 +101,20 @@ impl std::default::Default for Quantity {
     }
 }
 
-impl std::ops::Mul<f64> for Quantity {
+impl std::ops::Mul<f64> for &Quantity {
     type Output = Quantity;
     fn mul(self, x: f64) -> Quantity {
         Quantity {
             amount: self.amount * x,
-            ..self
+            unit: self.unit.clone(),
         }
+    }
+}
+
+impl std::ops::Mul<f64> for Quantity {
+    type Output = Quantity;
+    fn mul(self, x: f64) -> Quantity {
+        &self * x
     }
 }
 
