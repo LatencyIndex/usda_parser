@@ -67,6 +67,13 @@ where
     let inp = fs::read_to_string(inp).expect("Couldn't read input file");
     let mut out = BufWriter::new(fs::File::create_new(out).expect("Couldn't create output file"));
 
+    // Some of the datasets are too big to parse in one go, so the parsing is done incrementally.
+    // However, the json is composed of one top-level node, in the following form:
+    // {"nameOfFoodDB": [<json_value>,<json_value>,<json_value>,..]}
+    // This is a problem for the stream parser, because even though it consumes one json value at a time,
+    // the entire file is a single (recursive) json value. That is why we manually descend one level,
+    // and treat the json values as separate, as if they are not part of a json array.
+
     // The stream parser consumes exactly one complete json object at a time.
     // It does not parse any commas/brackets delimiting/containing the json objects.
     // So we manually ignore those delimiters from the input string.
