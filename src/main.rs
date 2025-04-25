@@ -1,4 +1,4 @@
-use riddle_of_protein::{food::rust, usda};
+use riddle_of_protein::food::{rust, usda};
 use std::{
     fs,
     io::{BufWriter, Write},
