@@ -9,6 +9,26 @@ pub struct Food {
     pub nutrients: BTreeMap<String, Quantity>,
 }
 
+impl PartialEq for Food {
+    fn eq(&self, other: &Self) -> bool {
+        self.name == other.name
+    }
+}
+
+impl Eq for Food {}
+
+impl PartialOrd for Food {
+    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+        Some(self.cmp(other))
+    }
+}
+
+impl Ord for Food {
+    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
+        self.name.cmp(&other.name)
+    }
+}
+
 impl fmt::Display for Food {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let nstr: String = self
