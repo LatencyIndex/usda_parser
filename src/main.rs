@@ -1,4 +1,4 @@
-use riddle_of_protein as rp;
+use riddle_of_protein::{food, json};
 use std::{
     collections::BTreeSet,
     fs,
@@ -9,7 +9,7 @@ use std::{
 
 // Sorted list of all unique trimmed nutrient names in the collection of foods.
 #[allow(unused)]
-fn unique_nutrients(foods: impl Iterator<Item = rp::Food>) -> Vec<String> {
+fn unique_nutrients(foods: impl Iterator<Item = food::Food>) -> Vec<String> {
     let nutrients: BTreeSet<String> = foods
         .flat_map(|f| f.nutrients.into_iter().map(|n| n.name.trim().to_owned()))
         .collect();
@@ -35,8 +35,8 @@ fn main() {
         .iter()
         // Create and chain iterators in one step.
         // Unwrap because failure to create an iterator should panic
-        .flat_map(|s| rp::USDAIter::new(s).unwrap())
-        .filter_map(|json| rp::as_food(&json));
+        .flat_map(|s| json::USDAIter::new(s).unwrap())
+        .filter_map(|json_val| food::as_food(&json_val));
 
     let mut out = BufWriter::new(fs::File::create_new("data/processed/test.txt").unwrap());
     for food in foods {
