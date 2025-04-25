@@ -37,13 +37,13 @@ impl fmt::Display for Unit {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let s = match self {
             Unit::InternationalUnit => "IU",
-            Unit::Gram =>              "g",
-            Unit::Kilojoule =>         "kJ",
-            Unit::Kilocalorie =>       "kcal",
-            Unit::Milligram =>         "mg",
-            Unit::SpecificGravity =>   "sp gr",
-            Unit::Microgram =>         "µg",
-            Unit::Other(u) =>           u,
+            Unit::Gram              => "g",
+            Unit::Kilojoule         => "kJ",
+            Unit::Kilocalorie       => "kcal",
+            Unit::Milligram         => "mg",
+            Unit::SpecificGravity   => "sp gr",
+            Unit::Microgram         => "µg",
+            Unit::Other(u)          =>  u,
         };
         write!(f, "{s}")
     }
