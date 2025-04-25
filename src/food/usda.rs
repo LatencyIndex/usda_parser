@@ -157,7 +157,7 @@ pub fn load_files<P: AsRef<Path>>(paths: &[P]) -> BTreeMap<String, Nutrients> {
     acc
 }
 
-pub trait FoodDB {
+pub trait HaskellDB {
     fn get_hs_food(
         &self,
         db_name: &str,
@@ -168,7 +168,7 @@ pub trait FoodDB {
     ) -> Food;
 }
 
-impl FoodDB for BTreeMap<String, Nutrients> {
+impl HaskellDB for BTreeMap<String, Nutrients> {
     fn get_hs_food(
         &self,
         db_name: &str,
