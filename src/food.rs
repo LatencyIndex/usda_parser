@@ -74,19 +74,32 @@ impl Quantity {
             _ => None,
         }
     }
+}
 
-    pub fn add(&self, other: &Quantity) -> Option<Quantity> {
+impl std::ops::Mul<f64> for Quantity {
+    type Output = Quantity;
+    fn mul(self, x: f64) -> Quantity {
+        Quantity {
+            amount: self.amount * x,
+            ..self
+        }
+    }
+}
+
+impl std::ops::Div<f64> for Quantity {
+    type Output = Quantity;
+    fn div(self, x: f64) -> Quantity {
+        self * (1.0 / x)
+    }
+}
+
+impl std::ops::Add<Quantity> for Quantity {
+    type Output = Option<Quantity>;
+    fn add(self, other: Quantity) -> Option<Quantity> {
         other.convert_to(&self.unit).map(|x| Quantity {
             amount: x.amount + self.amount,
             unit: x.unit,
         })
-    }
-
-    pub fn mul(&self, x: &f64) -> Quantity {
-        Quantity {
-            amount: self.amount * x,
-            unit: self.unit.clone(),
-        }
     }
 }
 
