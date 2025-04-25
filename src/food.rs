@@ -19,15 +19,16 @@ impl FromStr for Unit {
     type Err = String;
     #[rustfmt::skip]
     fn from_str(s: &str) -> Result<Self, Self::Err> {
+        use Unit::*;
         match s {
-            "IU"    => Ok(Unit::InternationalUnit),
-            "g"     => Ok(Unit::Gram),
-            "kJ"    => Ok(Unit::Kilojoule),
-            "kcal"  => Ok(Unit::Kilocalorie),
-            "mg"    => Ok(Unit::Milligram),
-            "sp gr" => Ok(Unit::SpecificGravity),
-            "µg"    => Ok(Unit::Microgram),
-            u       => Ok(Unit::Other(u.to_string())),
+            "IU"    => Ok(InternationalUnit),
+            "g"     => Ok(Gram),
+            "kJ"    => Ok(Kilojoule),
+            "kcal"  => Ok(Kilocalorie),
+            "mg"    => Ok(Milligram),
+            "sp gr" => Ok(SpecificGravity),
+            "µg"    => Ok(Microgram),
+            u       => Ok(Other(u.to_string())),
         }
     }
 }
@@ -35,15 +36,16 @@ impl FromStr for Unit {
 impl fmt::Display for Unit {
     #[rustfmt::skip]
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        use Unit::*;
         let s = match self {
-            Unit::InternationalUnit => "IU",
-            Unit::Gram              => "g",
-            Unit::Kilojoule         => "kJ",
-            Unit::Kilocalorie       => "kcal",
-            Unit::Milligram         => "mg",
-            Unit::SpecificGravity   => "sp gr",
-            Unit::Microgram         => "µg",
-            Unit::Other(u)          =>  u,
+            InternationalUnit => "IU",
+            Gram              => "g",
+            Kilojoule         => "kJ",
+            Kilocalorie       => "kcal",
+            Milligram         => "mg",
+            SpecificGravity   => "sp gr",
+            Microgram         => "µg",
+            Other(u)          =>  u,
         };
         write!(f, "{s}")
     }
