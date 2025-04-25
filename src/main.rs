@@ -5,5 +5,5 @@ fn main() {
     let inp = "data/source/FoodData_Central_sr_legacy_food_json_2021-10-28.json";
     let out = "data/processed/legacy_food.txt";
 
-    usda_parser::transmute_usda(inp, out, |x| x.to_string(), |_| true);
+    usda_parser::transmute_usda(inp, out, |x| x.to_string(), usda_parser::has_amino_profile);
 }

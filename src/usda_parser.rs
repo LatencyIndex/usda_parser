@@ -51,10 +51,32 @@ pub fn as_food(x: &json::Value) -> Option<Food> {
     Some(Food { name, nutrients })
 }
 
-fn has_microprotein(food: &Food) -> bool {
+fn contains_any(needles: &Vec<&str>, haystack: &str) -> bool {
+    needles.iter().any(|needle| haystack.contains(needle))
+}
+
+fn is_essential_amino_acid(nutrient: &str) -> bool {
+    let aminos = vec![
+        "histidine",
+        "isoleucine",
+        "leucine",
+        "lysine",
+        "methionine",
+        "cysteine",
+        "cystine",
+        "phenylalanine",
+        "tyrosine",
+        "threonine",
+        "tryptophan",
+        "valine",
+    ];
+    contains_any(&aminos, &nutrient.to_lowercase())
+}
+
+pub fn has_amino_profile(food: &Food) -> bool {
     food.nutrients
         .iter()
-        .any(|x| x.name.to_lowercase().contains("leucine"))
+        .any(|x| is_essential_amino_acid(&x.name))
 }
 
 // Parse a USDA nutrition json file into Food items, then filter and write them to output file.
