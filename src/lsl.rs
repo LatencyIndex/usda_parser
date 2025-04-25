@@ -2,3 +2,4 @@
 //! Because why settle for 'standard'?
 
 pub mod algorithm;
+pub mod numeric;
