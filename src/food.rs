@@ -55,6 +55,25 @@ pub struct Quantity {
     pub unit: Unit,
 }
 
+impl Quantity {
+    #[rustfmt::skip]
+    pub fn convert_to(&self, unit: &Unit) -> Option<Quantity> {
+        use Unit::*;
+        match (&self.unit, unit) {
+            (u, w) if u == w         => Some(self.clone()),
+            (Gram, Milligram)        => Some(Quantity {amount: self.amount * 1e+3,  unit: Milligram}),
+            (Gram, Microgram)        => Some(Quantity {amount: self.amount * 1e+6,  unit: Microgram}),
+            (Milligram, Gram)        => Some(Quantity {amount: self.amount * 1e-3,  unit: Gram}),
+            (Milligram, Microgram)   => Some(Quantity {amount: self.amount * 1e+3,  unit: Microgram}),
+            (Microgram, Gram)        => Some(Quantity {amount: self.amount * 1e-6,  unit: Gram}),
+            (Microgram, Milligram)   => Some(Quantity {amount: self.amount * 1e-3,  unit: Milligram}),
+            (Kilojoule, Kilocalorie) => Some(Quantity {amount: self.amount * 0.239, unit: Kilocalorie}),
+            (Kilocalorie, Kilojoule) => Some(Quantity {amount: self.amount * 4.184, unit: Kilojoule}),
+            _ => None,
+        }
+    }
+}
+
 impl fmt::Display for Quantity {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "{} {}", self.amount, self.unit)
