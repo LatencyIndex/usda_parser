@@ -95,7 +95,7 @@ pub fn to_food(x: &sj::Value) -> Option<(String, Nutrients)> {
     Some((name, nutrients))
 }
 
-pub fn foods_from_file<P: AsRef<Path>>(path: &P) -> BTreeMap<String, Nutrients> {
+pub fn foods_from_file<P: AsRef<Path> + ?Sized>(path: &P) -> BTreeMap<String, Nutrients> {
     let display_path = path.as_ref().display();
     let content = std::fs::read_to_string(path)
         .unwrap_or_else(|_| panic!("couldn't read file {display_path}"));
@@ -105,10 +105,9 @@ pub fn foods_from_file<P: AsRef<Path>>(path: &P) -> BTreeMap<String, Nutrients> 
         .collect()
 }
 
-pub fn merge_nutrients(old: &Nutrients, new: &Nutrients) -> Nutrients {
-    let mut merged = old.clone();
+pub fn update_nutrients(old: &mut Nutrients, new: &Nutrients) {
     for (name, q_new) in new {
-        match merged.get_mut(name) {
+        match old.get_mut(name) {
             Some(q_old) => {
                 // In case of conflict, prefer new version, unless it is zero.
                 // We assume that a non-zero value is more trustworthy, even if it's older.
@@ -117,11 +116,10 @@ pub fn merge_nutrients(old: &Nutrients, new: &Nutrients) -> Nutrients {
                 }
             }
             None => {
-                merged.insert(name.clone(), q_new.clone());
+                old.insert(name.clone(), q_new.clone());
             }
         }
     }
-    merged
 }
 
 #[cfg(test)]

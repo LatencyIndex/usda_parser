@@ -1,34 +1,33 @@
 use riddle_of_protein::food::usda;
 use std::{
-    collections::BTreeMap,
     fs,
     io::{BufWriter, Write},
 };
 
 fn main() {
-    // Default locations to where the zipped files unzip.
-    let inps: Vec<String> = [
-        // Omit branded food, because there's so much of it it would overwhelm other data,
-        // and is irrelevant - we don't care about specific brands.
-        // "data/source/FoodData_Central_branded_food_json_2024-04-18/brandedDownload.json",
-        // Omit survey food, because it's just random recipes.
-        // "data/source/FoodData_Central_survey_food_json_2022-10-28.json",
+    // Load food data
+    // Omit branded food, because there's so much of it it would overwhelm other data,
+    // and is irrelevant - we don't care about specific brands.
+    //      data/source/FoodData_Central_branded_food_json_2024-04-18/brandedDownload.json
+    // Omit survey food, because it's just random recipes.
+    //      data/source/FoodData_Central_survey_food_json_2022-10-28.json
+    let mut foods = usda::foods_from_file(
+        "data/source/FoodData_Central_sr_legacy_food_json_2018-04/FoodData_Central_sr_legacy_food_json_2021-10-28.json"
+    );
+    let new_foods = usda::foods_from_file(
         "data/source/FoodData_Central_foundation_food_json_2024-04-18/foundationDownload.json",
-        "data/source/FoodData_Central_sr_legacy_food_json_2018-04/FoodData_Central_sr_legacy_food_json_2021-10-28.json",
-    ] // Load all the food data as String (its json representation is too big for RAM)
-    .iter()
-    .map(|path| fs::read_to_string(path).unwrap_or_else(|_| panic!("couldn't read {path}")))
-    .collect();
-
-    // Iterate over its contained food items:
-    let foods = inps
-        .iter()
-        // Create and chain iterators in one step.
-        // Unwrap because failure to create an iterator should panic
-        .flat_map(|s| usda::JsonIter::new(s).unwrap())
-        .filter_map(|json_val| usda::to_food(&json_val));
-    // Sort the foods by name
-    let foods: BTreeMap<String, usda::Nutrients> = foods.collect();
+    );
+    // Some foods have entries in both the legacy and foundation datasets, so we merge entries from both.
+    for (name, new_nutrients) in new_foods {
+        match foods.get_mut(&name) {
+            Some(nutrients) => {
+                usda::update_nutrients(nutrients, &new_nutrients);
+            }
+            None => {
+                foods.insert(name, new_nutrients);
+            }
+        }
+    }
 
     let mut out = BufWriter::new(fs::File::create_new("data/processed/test.txt").unwrap());
     for (name, _nutrients) in foods {
