@@ -1,12 +1,32 @@
 //! Module for interpreting food nutrient data from USDA json.
 
 use serde_json as sjson;
-use std::fmt;
+use std::{cmp::Ordering, fmt};
 
 pub struct Nutrient {
     pub name: String,
     pub amount: f64,
     pub unit: String,
+}
+
+impl PartialEq for Nutrient {
+    fn eq(&self, other: &Self) -> bool {
+        self.name == other.name
+    }
+}
+
+impl Eq for Nutrient {}
+
+impl PartialOrd for Nutrient {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        Some(self.cmp(other))
+    }
+}
+
+impl Ord for Nutrient {
+    fn cmp(&self, other: &Self) -> Ordering {
+        self.name.cmp(&other.name)
+    }
 }
 
 pub struct Food {
@@ -41,11 +61,12 @@ fn as_nutrient(x: &sjson::Value) -> Option<Nutrient> {
 
 pub fn as_food(x: &sjson::Value) -> Option<Food> {
     let name = x["description"].as_str()?.to_string();
-    let nutrients: Vec<Nutrient> = x["foodNutrients"]
+    let mut nutrients: Vec<Nutrient> = x["foodNutrients"]
         .as_array()?
         .iter()
         .filter_map(as_nutrient)
         .collect();
+    nutrients.sort();
     Some(Food { name, nutrients })
 }
 
