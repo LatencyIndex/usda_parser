@@ -95,7 +95,38 @@ pub fn to_food(x: &sj::Value) -> Option<(String, Nutrients)> {
     Some((name, nutrients))
 }
 
-pub fn foods_from_file<P: AsRef<Path> + ?Sized>(path: &P) -> BTreeMap<String, Nutrients> {
+fn update_nutrients(old: &mut Nutrients, new: Nutrients) {
+    for (name, q_new) in new {
+        match old.get_mut(&name) {
+            Some(q_old) => {
+                // In case of conflict, prefer new version, unless it is zero.
+                // We assume that a non-zero value is more trustworthy, even if it's older.
+                if q_new.amount > 0.0 {
+                    *q_old = q_new;
+                }
+            }
+            None => {
+                old.insert(name, q_new);
+            }
+        }
+    }
+}
+
+fn update_foods(old: &mut BTreeMap<String, Nutrients>, new: BTreeMap<String, Nutrients>) {
+    for (name, new_nutrients) in new {
+        match old.get_mut(&name) {
+            Some(nutrients) => {
+                update_nutrients(nutrients, new_nutrients);
+            }
+            None => {
+                old.insert(name, new_nutrients);
+            }
+        }
+    }
+}
+
+/// Panics if the file for any reason can't be converted to foods.
+fn food_from_file<P: AsRef<Path> + ?Sized>(path: &P) -> BTreeMap<String, Nutrients> {
     let display_path = path.as_ref().display();
     let content = std::fs::read_to_string(path)
         .unwrap_or_else(|_| panic!("couldn't read file {display_path}"));
@@ -105,21 +136,16 @@ pub fn foods_from_file<P: AsRef<Path> + ?Sized>(path: &P) -> BTreeMap<String, Nu
         .collect()
 }
 
-pub fn update_nutrients(old: &mut Nutrients, new: &Nutrients) {
-    for (name, q_new) in new {
-        match old.get_mut(name) {
-            Some(q_old) => {
-                // In case of conflict, prefer new version, unless it is zero.
-                // We assume that a non-zero value is more trustworthy, even if it's older.
-                if q_new.amount > 0.0 {
-                    *q_old = q_new.clone();
-                }
-            }
-            None => {
-                old.insert(name.clone(), q_new.clone());
-            }
-        }
+/// Paths should be ordered from oldest to newest regarding their food analisys.
+/// Some foods have entries in multiple datasets, and this way we use the most
+/// appropriate values from each.
+/// In the recommended datasets, there are no entries that differ only in capitalization.
+pub fn food_from_files<P: AsRef<Path>>(paths: &[P]) -> BTreeMap<String, Nutrients> {
+    let mut acc = BTreeMap::new();
+    for foods in paths.iter().map(food_from_file) {
+        update_foods(&mut acc, foods);
     }
+    acc
 }
 
 #[cfg(test)]
