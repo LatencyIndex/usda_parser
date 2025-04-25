@@ -10,13 +10,13 @@ fn trim_to_brackets(s: &str) -> Option<&str> {
 }
 
 /// Iterates over json values in USDA json files, parsing incrementally.
-pub struct USDAIter<'a> {
+pub struct JsonIter<'a> {
     inp: &'a str,
     pub bytes_parsed: usize,
 }
 
-impl<'a> USDAIter<'a> {
-    pub fn new(inp: &'a str) -> Option<USDAIter<'a>> {
+impl<'a> JsonIter<'a> {
+    pub fn new(inp: &'a str) -> Option<JsonIter<'a>> {
         // Some of the datasets are too big to parse in one go, so the parsing is done incrementally.
         // However, the json is composed of one top-level node, in the following form:
         // {"nameOfFoodDB": [<json_value>,<json_value>,<json_value>,..]}
@@ -25,14 +25,14 @@ impl<'a> USDAIter<'a> {
         // by manually trimming the string slice to inside the outer-most []:
         //      <json_value>,<json_value>,<json_value>,..<json_value>
         // and treat the json values as separate, as if they are not part of a json array.
-        trim_to_brackets(inp).map(|trimmed| USDAIter {
+        trim_to_brackets(inp).map(|trimmed| JsonIter {
             inp: trimmed,
             bytes_parsed: inp.len() - trimmed.len(),
         })
     }
 }
 
-impl<'a> Iterator for USDAIter<'a> {
+impl<'a> Iterator for JsonIter<'a> {
     type Item = sj::Value;
 
     fn next(&mut self) -> Option<Self::Item> {
