@@ -11,7 +11,7 @@ fn main() {
         "data/source/FoodData_Central_sr_legacy_food_json_2021-10-28.json",
     ]
     .iter()
-    .map(|path| fs::read_to_string(path).expect(&format!("couldn't read {path}")))
+    .map(|path| fs::read_to_string(path).unwrap_or_else(|_| panic!("couldn't read {path}")))
     .collect();
 
     // Iterate over its contained food items:
@@ -23,6 +23,7 @@ fn main() {
 
     let mut out = BufWriter::new(fs::File::create_new("data/processed/test.txt").unwrap());
     for food in foods {
-        out.write(format!("{}\n", food.name).as_bytes()).unwrap();
+        out.write_all(format!("{}\n", food.name).as_bytes())
+            .unwrap();
     }
 }

@@ -47,7 +47,7 @@ pub fn as_food(x: &json::Value) -> Option<Food> {
     Some(Food { name, nutrients })
 }
 
-fn contains_any(needles: &Vec<&str>, haystack: &str) -> bool {
+fn contains_any(needles: &[&str], haystack: &str) -> bool {
     needles.iter().any(|needle| haystack.contains(needle))
 }
 
@@ -128,10 +128,10 @@ impl<'a> Iterator for USDAIter<'a> {
 
                 let bytes_new = self.inp.len();
                 self.bytes_parsed += bytes_old - bytes_new;
-                return Some(val);
+                Some(val)
             }
             // When conversion to json fails, assume there are no more json values left to parse.
-            _ => return None,
+            _ => None,
         }
     }
 }
