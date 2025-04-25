@@ -1,25 +1,14 @@
 use riddle_of_protein::{food, json};
 use std::{
-    collections::BTreeSet,
     fs,
     io::{BufWriter, Write},
 };
 
-// TODO: list matching foods and their nutrients as haskell
-
-// Sorted list of all unique trimmed nutrient names in the collection of foods.
-#[allow(unused)]
-fn unique_nutrients(foods: impl Iterator<Item = food::Food>) -> Vec<String> {
-    let nutrients: BTreeSet<String> = foods
-        .flat_map(|f| f.nutrients.into_iter().map(|n| n.name.trim().to_owned()))
-        .collect();
-    nutrients.into_iter().collect()
-}
-
 fn main() {
     // Default locations to where the zipped files unzip.
     let inps: Vec<String> = [
-        // Omit branded food, because there's so much of it it would overwhelm other data.
+        // Omit branded food, because there's so much of it it would overwhelm other data,
+        // and is irrelevant - we don't care about specific brands.
         // "data/source/FoodData_Central_branded_food_json_2024-04-18/brandedDownload.json",
         // Omit survey food, because it's just random recipes.
         // "data/source/FoodData_Central_survey_food_json_2022-10-28.json",

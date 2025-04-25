@@ -1,43 +1,69 @@
 //! Module for interpreting food nutrient data from USDA json.
 
 use serde_json as sjson;
-use std::{cmp::Ordering, fmt};
+use std::{collections::BTreeMap, fmt, str::FromStr};
 
-pub struct Nutrient {
-    pub name: String,
+#[derive(Clone, PartialEq, Eq, PartialOrd, Ord)]
+pub enum Unit {
+    InternationalUnit,
+    Gram,
+    Kilojoule,
+    Kilocalorie,
+    Milligram,
+    SpecificGravity, // Only used for one liquid, can ignore.
+    Microgram,
+    Other(String), // Needed for robustness, e.g. when exploring new datasets.
+}
+
+impl FromStr for Unit {
+    type Err = String;
+    #[rustfmt::skip]
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            "IU"    => Ok(Unit::InternationalUnit),
+            "g"     => Ok(Unit::Gram),
+            "kJ"    => Ok(Unit::Kilojoule),
+            "kcal"  => Ok(Unit::Kilocalorie),
+            "mg"    => Ok(Unit::Milligram),
+            "sp gr" => Ok(Unit::SpecificGravity),
+            "µg"    => Ok(Unit::Microgram),
+            u       => Ok(Unit::Other(u.to_string())),
+        }
+    }
+}
+
+impl fmt::Display for Unit {
+    #[rustfmt::skip]
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let s = match self {
+            Unit::InternationalUnit => "IU",
+            Unit::Gram =>              "g",
+            Unit::Kilojoule =>         "kJ",
+            Unit::Kilocalorie =>       "kcal",
+            Unit::Milligram =>         "mg",
+            Unit::SpecificGravity =>   "sp gr",
+            Unit::Microgram =>         "µg",
+            Unit::Other(u) =>           u,
+        };
+        write!(f, "{s}")
+    }
+}
+
+#[derive(Clone)]
+pub struct Quantity {
     pub amount: f64,
-    pub unit: String,
+    pub unit: Unit,
 }
 
-impl PartialEq for Nutrient {
-    fn eq(&self, other: &Self) -> bool {
-        self.name == other.name
-    }
-}
-
-impl Eq for Nutrient {}
-
-impl PartialOrd for Nutrient {
-    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
-        Some(self.cmp(other))
-    }
-}
-
-impl Ord for Nutrient {
-    fn cmp(&self, other: &Self) -> Ordering {
-        self.name.cmp(&other.name)
+impl fmt::Display for Quantity {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{} {}", self.amount, self.unit)
     }
 }
 
 pub struct Food {
     pub name: String,
-    pub nutrients: Vec<Nutrient>,
-}
-
-impl fmt::Display for Nutrient {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{}: {} {}", self.name, self.amount, self.unit)
-    }
+    pub nutrients: BTreeMap<String, Quantity>,
 }
 
 impl fmt::Display for Food {
@@ -45,54 +71,34 @@ impl fmt::Display for Food {
         let nstr: String = self
             .nutrients
             .iter()
-            .map(|s| format!("    {s}\n"))
+            .map(|(name, quantity)| format!("    {name}: {quantity}\n"))
             .collect::<Vec<String>>()
             .concat();
         write!(f, "{}:\n{}", self.name, nstr)
     }
 }
 
-fn as_nutrient(x: &sjson::Value) -> Option<Nutrient> {
+fn as_nutrient(x: &sjson::Value) -> Option<(String, Quantity)> {
     let amount = x["amount"].as_f64()?;
-    let name = x["nutrient"]["name"].as_str()?.to_string();
-    let unit = x["nutrient"]["unitName"].as_str()?.to_string();
-    Some(Nutrient { name, amount, unit })
+    let name = x["nutrient"]["name"].as_str()?.trim().to_string();
+    let unit = x["nutrient"]["unitName"].as_str()?.trim().parse().ok()?;
+    Some((name, Quantity { amount, unit }))
 }
 
 pub fn as_food(x: &sjson::Value) -> Option<Food> {
-    let name = x["description"].as_str()?.to_string();
-    let mut nutrients: Vec<Nutrient> = x["foodNutrients"]
+    let name = x["description"].as_str()?.trim().to_string();
+    let mut nutrients = BTreeMap::new();
+    for (k, v) in x["foodNutrients"]
         .as_array()?
         .iter()
         .filter_map(as_nutrient)
-        .collect();
-    nutrients.sort();
+    {
+        // The only 'nutrient' to ever repeat itself in the food DB is Energy.
+        // It is usually listed twice, in kJ and in kcal.
+        // We prefer the kcal version, so only insert the kJ version if kcal is absent.
+        if !(k == "Energy" && v.unit == Unit::Kilojoule && nutrients.contains_key(&k)) {
+            nutrients.insert(k, v);
+        }
+    }
     Some(Food { name, nutrients })
-}
-
-fn contains_any(needles: &[&str], haystack: &str) -> bool {
-    needles.iter().any(|needle| haystack.contains(needle))
-}
-
-fn is_essential_amino_acid(nutrient: &str) -> bool {
-    let aminos = vec![
-        "cysteine",
-        "histidine",
-        "isoleucine",
-        "leucine",
-        "lysine",
-        "methionine",
-        "phenylalanine",
-        "threonine",
-        "tryptophan",
-        "tyrosine",
-        "valine",
-    ];
-    contains_any(&aminos, &nutrient.to_lowercase())
-}
-
-pub fn has_amino_profile(food: &Food) -> bool {
-    food.nutrients
-        .iter()
-        .any(|x| is_essential_amino_acid(&x.name))
 }
