@@ -5,8 +5,7 @@ use std::{
 };
 
 fn main() {
-    // Load food data
-    let foods = usda::food_from_files(&[
+    let fooddb = usda::load_files(&[
         // Omit branded food, because there's so much of it it would overwhelm other data,
         // and is irrelevant - we don't care about specific brands.
         // data/source/FoodData_Central_branded_food_json_2024-04-18/brandedDownload.json
