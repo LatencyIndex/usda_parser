@@ -17,16 +17,16 @@ impl FromStr for Unit {
     #[rustfmt::skip]
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         use Unit::*;
-        match s {
-            "IU"    => Ok(InternationalUnit),
-            "g"     => Ok(Gram),
-            "kJ"    => Ok(Kilojoule),
-            "kcal"  => Ok(Kilocalorie),
-            "mg"    => Ok(Milligram),
-            "sp gr" => Ok(SpecificGravity),
-            "µg"    => Ok(Microgram),
-            u       => Ok(Other(u.to_string())),
-        }
+        Ok(match s {
+            "IU"    => InternationalUnit,
+            "g"     => Gram,
+            "kJ"    => Kilojoule,
+            "kcal"  => Kilocalorie,
+            "mg"    => Milligram,
+            "sp gr" => SpecificGravity,
+            "µg"    => Microgram,
+            u       => Other(u.to_string()),
+        })
     }
 }
 
