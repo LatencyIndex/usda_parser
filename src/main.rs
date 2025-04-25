@@ -7,11 +7,11 @@ use std::{
 
 // TODO: list matching foods and their nutrients as haskell
 
-// Sorted list of all unique nutrient names in the collection of foods.
+// Sorted list of all unique trimmed nutrient names in the collection of foods.
 #[allow(unused)]
 fn unique_nutrients(foods: impl Iterator<Item = rp::Food>) -> Vec<String> {
     let nutrients: BTreeSet<String> = foods
-        .flat_map(|f| f.nutrients.into_iter().map(|n| n.name))
+        .flat_map(|f| f.nutrients.into_iter().map(|n| n.name.trim().to_owned()))
         .collect();
     nutrients.into_iter().collect()
 }
