@@ -1,0 +1,277 @@
+Nutrients where the translation to the haskell equivalents is complex:
+    // Carbs
+    "Carbohydrate, by difference"
+    "Carbohydrate, by summation"
+    // Vitamin A
+    "Cryptoxanthin, beta"
+    "Retinol"
+    "Vitamin A, IU"
+    "Vitamin A, RAE"
+    // Calories
+    "Energy"
+    "Energy (Atwater General Factors)"
+    "Energy (Atwater Specific Factors)"
+    // Fiber
+    "Fiber, insoluble"
+    "Fiber, soluble"
+    "Fiber, total dietary"
+    "High Molecular Weight Dietary Fiber (HMWDF)"
+    "Low Molecular Weight Dietary Fiber (LMWDF)"
+    "Total dietary fiber (AOAC 2011.25)"
+    // Vitamin B-9
+    "Folate, DFE"
+    "Folate, food"
+    "Folate, total"
+    "Folic acid"
+    // Omega-9 fatty acids
+    "MUFA 22:1 n-9"
+    "PUFA 20:3 n-9"
+    // Omega-6 fatty acids
+    "PUFA 18:2 n-6 c,c"
+    "PUFA 18:3 n-6 c,c,c"
+    "PUFA 20:2 n-6 c,c"
+    "PUFA 20:3 n-6"
+    "PUFA 2:4 n-6"
+    // Omega-3 fatty acids
+    "PUFA 18:3 n-3 c,c,c (ALA)"
+    "PUFA 20:3 n-3"
+    "PUFA 20:5 n-3 (EPA)"
+    "PUFA 22:5 n-3 (DPA)"
+    "PUFA 22:6 n-3 (DHA)"
+    "PUFA 2:5 n-3 (EPA)"
+    // Sugars
+    "Sugars, Total"
+    "Sugars, total including NLEA"
+    "Total Sugars"
+    // Vitamin E
+    "Tocopherol, beta"
+    "Tocopherol, delta"
+    "Tocopherol, gamma"
+    "Tocotrienol, alpha"
+    "Tocotrienol, beta"
+    "Tocotrienol, delta"
+    "Tocotrienol, gamma"
+    "Vitamin E (alpha-tocopherol)"
+    "Vitamin E, added"
+    // Fat
+    "Total fat (NLEA)"
+    "Total lipid (fat)"
+    // Vitamin B-12
+    "Vitamin B-12"
+    "Vitamin B-12, added"
+    // Vitamin D
+    "Vitamin D (D2 + D3)"
+    "Vitamin D (D2 + D3), International Units"
+    "Vitamin D2 (ergocalciferol)"
+    "Vitamin D3 (cholecalciferol)"
+    "Vitamin D4"
+    // Vitamin K
+    "Vitamin K (Dihydrophylloquinone)"
+    "Vitamin K (Menaquinone-4)"
+    "Vitamin K (phylloquinone)"
+
+Nutrients where ther translation is simple/there is a 1:1 correspondence:
+    "Biotin"                                    // "Vitamin_B7"
+    "Boron, B"                                  // "Element_B"
+    "Calcium, Ca"                               // "Element_Ca"
+    "Cholesterol"                               // "Cholesterol"
+    "Choline, total"                            // "Choline"
+    "Cobalt, Co"                                // "Element_Co"
+    "Copper, Cu"                                // "Element_Cu"
+    "Cysteine"                                  // "Amino_Cysteine"
+    "Fluoride, F"                               // "Element_F"
+    "Histidine"                                 // "Amino_Histidine"
+    "Iodine, I"                                 // "Element_I"
+    "Iron, Fe"                                  // "Element_Fe"
+    "Isoleucine"                                // "Amino_Isoleucine"
+    "Leucine"                                   // "Amino_Leucine"
+    "Lysine"                                    // "Amino_Lysine"
+    "Magnesium, Mg"                             // "Element_Mg"
+    "Manganese, Mn"                             // "Element_Mn"
+    "Methionine"                                // "Amino_Methionine"
+    "Molybdenum, Mo"                            // "Element_Mo"
+    "Niacin"                                    // "Vitamin_B3"
+    "Pantothenic acid"                          // "Vitamin_B5"
+    "Phenylalanine"                             // "Amino_Phenylalanine"
+    "Phosphorus, P"                             // "Element_P"
+    "Potassium, K"                              // "Element_K"
+    "Protein"                                   // "Protein"
+    "Riboflavin"                                // "Vitamin_B2"
+    "Selenium, Se"                              // "Element_Se"
+    "Sodium, Na"                                // "Element_Na"
+    "Sulfur, S"                                 // "Element_S"
+    "Thiamin"                                   // "Vitamin_B1"
+    "Threonine"                                 // "Amino_Threonine"
+    "Tryptophan"                                // "Amino_Tryptophan"
+    "Tyrosine"                                  // "Amino_Tyrosine"
+    "Valine"                                    // "Amino_Valine"
+    "Vitamin B-6"                               // "Vitamin_B6"
+    "Vitamin C, total ascorbic acid"            // "Vitamin_C"
+    "Zinc, Zn"                                  // "Element_Zn"
+
+Nutrients that we ignore:
+    "10-Formyl folic acid (10HCOFA)"
+    "25-hydroxycholecalciferol"
+    "5-Formyltetrahydrofolic acid (5-HCOH4"
+    "5-methyl tetrahydrofolate (5-MTHF)"
+    "Alanine"
+    "Alcohol, ethyl"
+    "Arginine"
+    "Ash"
+    "Aspartic acid"
+    "Beta-glucan"
+    "Beta-sitostanol"
+    "Beta-sitosterol"
+    "Betaine"
+    "Brassicasterol"
+    "Caffeine"
+    "Campestanol"
+    "Campesterol"
+    "Carotene, alpha"
+    "Carotene, beta"
+    "Carotene, gamma"
+    "Choline, free"
+    "Choline, from glycerophosphocholine"
+    "Choline, from phosphocholine"
+    "Choline, from phosphotidyl choline"
+    "Choline, from sphingomyelin"
+    "Citric acid"
+    "Cryptoxanthin, alpha"
+    // Presently unclear how Cystine is related to complete protein and/or cysteine:
+    // https://en.wikipedia.org/wiki/Talk:Complete_protein#Cysteine_vs_cystine_confusion
+    "Cystine"
+    "Daidzein"
+    "Daidzin"
+    "Delta-5-avenasterol"
+    "Delta-7-Stigmastenol"
+    // Provitamins D (probably D2), but requires UV light for conversion,
+    // and I don't know how well the conversion works in humans.
+    "Ergosta-5,7-dienol"
+    "Ergosta-7,22-dienol"
+    "Ergosta-7-enol"
+    "Ergosterol"
+    // Physiological role in humans unknown
+    "Ergothioneine"
+    // Just ignore the various sub-fats, and consider only total fat
+    "Fatty acids, total monounsaturated"
+    "Fatty acids, total polyunsaturated"
+    "Fatty acids, total saturated"
+    "Fatty acids, total trans"
+    "Fatty acids, total trans-dienoic"
+    "Fatty acids, total trans-monoenoic"
+    "Fatty acids, total trans-polyenoic"
+    "Fructose"                                     // Carb. Ignore in favor of total carbs.
+    "Galactose"                                    // Carb. Ignore in favor of total carbs.
+    "Genistein"
+    "Genistin"
+    "Glucose"                                      // Carb. Ignore in favor of total carbs.
+    "Glutamic acid"                                // Non-essential amino acid. Ignore in favor of total protein.
+    "Glutathione"                                  // Antioxidant
+    "Glycine"                                      // Non-essential amino acid. Ignore in favor of total protein.
+    "Glycitin"                                     // Doesn't seem too important.
+    "Hydroxyproline"                               // Non-essential amino acid. Ignore in favor of total protein.
+    "Lactose"                                      // Carb. Ignore in favor of total carbs.
+    "Lutein"                                       // Role in the body is unknown.
+    "Lutein + zeaxanthin"                          // Role in the body is unknown.
+    "Lycopene"                                     // Non-essential.
+    // Monounsaturated fatty acids. c: cis, t: trans, no label: ???
+    // n-x signifies it is an omega-x fatty acid e.g. n-3 corresponds to omega-3)
+    // Consequently, those without a n-x designation cannot be classified into the omega-x system, and so we ignore them.
+    "MUFA 12:1"
+    "MUFA 14:1"
+    "MUFA 14:1 c"
+    "MUFA 15:1"
+    "MUFA 16:1"
+    "MUFA 16:1 c"
+    "MUFA 17:1"
+    "MUFA 17:1 c"
+    "MUFA 18:1"
+    "MUFA 18:1 c"
+    "MUFA 18:1-11 t (18:1t n-7)"
+    "MUFA 20:1"
+    "MUFA 20:1 c"
+    "MUFA 22:1"
+    "MUFA 22:1 c"
+    "MUFA 22:1 n-11"
+    "MUFA 24:1 c"
+    "Malic acid"
+    "Maltose"                                      // Carb. Ignore in favor of total carbs.
+    "Nickel, Ni"                                   // Unconfirmed whether nickel is essential.
+    "Nitrogen"
+    "Oxalic acid"                                  // Non-essential as far as I can tell.
+    // Poly-unsaturated fatty acids:
+    "PUFA 18:2 CLAs"
+    "PUFA 18:2 c"
+    "PUFA 18:2 i"
+    "PUFA 18:2"
+    "PUFA 18:3 c"
+    "PUFA 18:3"
+    "PUFA 18:3i"
+    "PUFA 18:4"
+    "PUFA 20:2 c"
+    "PUFA 20:3 c"
+    "PUFA 20:3"
+    "PUFA 20:4"
+    "PUFA 20:4c"
+    "PUFA 20:5c"
+    "PUFA 21:5"
+    "PUFA 22:2"
+    "PUFA 22:3"
+    "PUFA 22:4"
+    "PUFA 22:5 c"
+    "PUFA 22:6 c"
+    "Phytoene"
+    "Phytofluene"
+    "Phytosterols"                                 // Beneficial for lowering cholesterol
+    "Phytosterols, other"                          // Beneficial for lowering cholesterol
+    "Proline"                                      // Non-essential protein
+    "Pyruvic acid"
+    "Quinic acid"
+    "Raffinose"                                    // Carb. Ignore in favor of total carbs.
+    // Saturated fatty acids:
+    "SFA 10:0"
+    "SFA 11:0"
+    "SFA 12:0"
+    "SFA 13:0"
+    "SFA 14:0"
+    "SFA 15:0"
+    "SFA 16:0"
+    "SFA 17:0"
+    "SFA 18:0"
+    "SFA 20:0"
+    "SFA 21:0"
+    "SFA 22:0"
+    "SFA 23:0"
+    "SFA 24:0"
+    "SFA 4:0"
+    "SFA 5:0"
+    "SFA 6:0"
+    "SFA 7:0"
+    "SFA 8:0"
+    "SFA 9:0"
+    "Serine"                                       // Non-essential protein
+    "Specific Gravity"                             // Something to do with liquid density.
+    "Stachyose"                                    // Carb. Ignore in favor of total carbs.
+    "Starch"                                       // Carb. Ignore in favor of total carbs.
+    "Stigmastadiene"
+    "Stigmasterol"
+    "Sucrose"                                      // Carb & sugar. Ignore in favor of total carbs/sugars.
+    // Trans fats
+    "TFA 14:1 t"
+    "TFA 16:1 t"
+    "TFA 18:1 t"
+    "TFA 18:2 t"
+    "TFA 18:2 t not further defined"
+    "TFA 18:2 t,t"
+    "TFA 18:3 t"
+    "TFA 20:1 t"
+    "TFA 22:1 t"
+    "Theobromine"
+    "Verbascose"                                   // Carb. Ignore in favor of total carbs.
+    "Water"
+    "Zeaxanthin"
+    "cis-Lutein/Zeaxanthin"
+    "cis-Lycopene"
+    "cis-beta-Carotene"
+    "trans-Lycopene"
+    "trans-beta-Carotene"
