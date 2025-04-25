@@ -149,3 +149,12 @@ impl std::iter::Sum for Quantity {
         acc
     }
 }
+
+pub fn add_opt_qs(l: Option<Quantity>, r: Option<Quantity>) -> Option<Quantity> {
+    match (l, r) {
+        (None, None) => None,
+        (Some(l), None) => Some(l),
+        (None, Some(r)) => Some(r),
+        (Some(l), Some(r)) => Some(l + r),
+    }
+}
