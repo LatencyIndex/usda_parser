@@ -1,4 +1,4 @@
-use riddle_of_protein::{food, json};
+use riddle_of_protein::{food, usda};
 use std::{
     fs,
     io::{BufWriter, Write},
@@ -24,7 +24,7 @@ fn main() {
         .iter()
         // Create and chain iterators in one step.
         // Unwrap because failure to create an iterator should panic
-        .flat_map(|s| json::USDAIter::new(s).unwrap())
+        .flat_map(|s| usda::USDAIter::new(s).unwrap())
         .filter_map(|json_val| food::as_food(&json_val));
 
     let mut out = BufWriter::new(fs::File::create_new("data/processed/test.txt").unwrap());

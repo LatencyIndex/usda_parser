@@ -1,4 +1,5 @@
 pub mod algorithm;
 pub mod explore;
 pub mod food;
-pub mod json;
+pub mod haskell;
+pub mod usda;
