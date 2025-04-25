@@ -2,7 +2,7 @@
 
 use crate::food::units::{Quantity, Unit};
 use serde_json as sj;
-use std::collections::BTreeMap;
+use std::{collections::BTreeMap, path::Path};
 
 /// Discard the string outside of and including the outer-most pair of []
 fn trim_to_brackets(s: &str) -> Option<&str> {
@@ -93,6 +93,35 @@ pub fn to_food(x: &sj::Value) -> Option<(String, Nutrients)> {
         }
     }
     Some((name, nutrients))
+}
+
+pub fn foods_from_file<P: AsRef<Path>>(path: &P) -> BTreeMap<String, Nutrients> {
+    let display_path = path.as_ref().display();
+    let content = std::fs::read_to_string(path)
+        .unwrap_or_else(|_| panic!("couldn't read file {display_path}"));
+    JsonIter::new(&content)
+        .expect("couldn't parse file {display_path} as usda json")
+        .filter_map(|json_val| to_food(&json_val))
+        .collect()
+}
+
+pub fn merge_nutrients(old: &Nutrients, new: &Nutrients) -> Nutrients {
+    let mut merged = old.clone();
+    for (name, q_new) in new {
+        match merged.get_mut(name) {
+            Some(q_old) => {
+                // In case of conflict, prefer new version, unless it is zero.
+                // We assume that a non-zero value is more trustworthy, even if it's older.
+                if q_new.amount > 0.0 {
+                    *q_old = q_new.clone();
+                }
+            }
+            None => {
+                merged.insert(name.clone(), q_new.clone());
+            }
+        }
+    }
+    merged
 }
 
 #[cfg(test)]
