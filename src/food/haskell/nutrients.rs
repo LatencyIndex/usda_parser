@@ -45,7 +45,7 @@ pub fn derive_nutrients(nutrients: &rust::Nutrients) -> BTreeMap<String, Quantit
         // "Vitamin A, IU"
         // "Vitamin D (D2 + D3), International Units"
     // NLEA: Nutrition labeling and education act of 1990
-    let nutrients: BTreeMap<String, Quantity> = BTreeMap::from_iter([
+    let nutrients_haskell: BTreeMap<String, Quantity> = BTreeMap::from_iter([
         // By summation is a newer and more accurate method than by difference.
         ("Carbohydrates",       priority(&[
                                     "Carbohydrate, by summation",
@@ -179,5 +179,5 @@ pub fn derive_nutrients(nutrients: &rust::Nutrients) -> BTreeMap<String, Quantit
     ].into_iter().filter_map(|(s,optq)| {
         optq.map(|q| (s.to_string(), q))
     }));
-    nutrients
+    nutrients_haskell
 }
