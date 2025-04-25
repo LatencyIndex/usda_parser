@@ -29,8 +29,9 @@ fn main() {
     // Iterate over its contained food items:
     let foods = inps
         .iter()
-        .filter_map(|s| rp::USDAIter::new(s))
-        .flatten() // Chain iterators over each file
+        // Create and chain iterators in one step.
+        // Unwrap because failure to create an iterator should panic
+        .flat_map(|s| rp::USDAIter::new(s).unwrap())
         .filter_map(|json| rp::as_food(&json));
 
     let mut out = BufWriter::new(fs::File::create_new("data/processed/test.txt").unwrap());
