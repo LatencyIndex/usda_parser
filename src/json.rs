@@ -1,6 +1,6 @@
 //! Module for parsing the USDA food data json files.
 
-use serde_json as json;
+use serde_json as sj;
 
 /// Discard the string outside of and including the outer-most pair of []
 fn trim_to_brackets(s: &str) -> Option<&str> {
@@ -33,7 +33,7 @@ impl<'a> USDAIter<'a> {
 }
 
 impl<'a> Iterator for USDAIter<'a> {
-    type Item = json::Value;
+    type Item = sj::Value;
 
     fn next(&mut self) -> Option<Self::Item> {
         // The stream parser consumes exactly one complete json object at a time.
@@ -42,7 +42,7 @@ impl<'a> Iterator for USDAIter<'a> {
 
         // That is, if the string is "<json_value>,<json_value>,<json_value>",
         // parse the first json object, skip the comma, and repeat.
-        let mut json_stream = json::Deserializer::from_str(self.inp).into_iter::<json::Value>();
+        let mut json_stream = sj::Deserializer::from_str(self.inp).into_iter::<sj::Value>();
         match json_stream.next() {
             // Keep parsing as long as input can be parsed to json.
             Some(Ok(val)) => {
