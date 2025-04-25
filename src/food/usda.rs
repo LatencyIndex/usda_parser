@@ -33,8 +33,8 @@ impl<'a> JsonIter<'a> {
         // However, the json is composed of one top-level node, in the following form:
         // {"nameOfFoodDB": [<json_value>,<json_value>,<json_value>,..]}
         // This is a problem for the stream parser, because even though it consumes one json value at a time,
-        // the entire file is a single (recursive) json value. That is why we manually descend one level
-        // by manually trimming the string slice to inside the outer-most []:
+        // the entire file is a single (recursive) json value. That is why we descend one level
+        // by trimming the string slice to inside the outer-most []:
         //      <json_value>,<json_value>,<json_value>,..<json_value>
         // and treat the json values as separate, as if they are not part of a json array.
         trim_to_brackets(inp).map(|trimmed| JsonIter {
@@ -44,7 +44,7 @@ impl<'a> JsonIter<'a> {
     }
 }
 
-impl<'a> Iterator for JsonIter<'a> {
+impl Iterator for JsonIter<'_> {
     type Item = sj::Value;
 
     fn next(&mut self) -> Option<Self::Item> {
