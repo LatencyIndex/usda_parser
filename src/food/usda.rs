@@ -10,6 +10,7 @@ fn trim_to_brackets(s: &str) -> Option<&str> {
 }
 
 /// Iterates over json values in USDA json files, parsing incrementally.
+#[derive(Clone, Copy)]
 pub struct JsonIter<'a> {
     inp: &'a str,
     pub bytes_parsed: usize,
