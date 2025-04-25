@@ -204,4 +204,37 @@ mod tests {
         }
 
     }
+
+    #[test]
+    #[rustfmt::skip]
+    fn test_sum_homogeneous() {
+        let amounts = [2.0, 3.0, 7.0];
+        let sum: f64 = amounts.iter().sum();
+        for unit in [Kilojoule, Gram, Milligram, InternationalUnit] {
+            let qs = amounts.iter().map(|x| Quantity{amount: *x, unit: unit.clone()});
+            almost_eq(&qs.sum(), &Quantity{amount: sum, unit: unit.clone()});
+        }
+    }
+
+    #[test]
+    #[rustfmt::skip]
+    fn test_sum_compatible() {
+        let compatible = [
+            Quantity {amount:    2.0, unit: Gram},
+            Quantity {amount: 3000.0, unit: Milligram},
+        ];
+        // Result unit should be same as first unit in sum.
+        almost_eq(&compatible.into_iter().sum(), &Quantity {amount: 5.0, unit: Gram});
+    }
+
+    #[test]
+    #[should_panic]
+    #[rustfmt::skip]
+    fn test_sum_incompatible() {
+        let incompatible = [
+            Quantity {amount:    2.0, unit: Gram},
+            Quantity {amount: 3000.0, unit: Kilojoule},
+        ];
+        let _: Quantity = incompatible.into_iter().sum();
+    }
 }
