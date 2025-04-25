@@ -1,11 +1,13 @@
 //! Translate nutrients from how they are given by the USDA json, to how the Haskell code needs them.
 
-use crate::food::rust;
-use crate::food::units::{add_opt_qs, Quantity, Unit::Microgram};
+use crate::food::{
+    units::{add_opt_qs, Quantity, Unit::Microgram},
+    usda::Nutrients,
+};
 use crate::lsl::algorithm::get_first;
 use std::collections::BTreeMap;
 
-pub fn derive_calories(nutrients: &rust::Nutrients) -> Option<Quantity> {
+pub fn derive_calories(nutrients: &Nutrients) -> Option<Quantity> {
     // The Atwater specific factors value should be more accurate than
     // the general factor version. But if available, choose plain 'Energy' - presumably
     // it has been chosen as most accurate by the analysts.
@@ -21,7 +23,7 @@ pub fn derive_calories(nutrients: &rust::Nutrients) -> Option<Quantity> {
     .cloned()
 }
 
-pub fn derive_nutrients(nutrients: &rust::Nutrients) -> BTreeMap<String, Quantity> {
+pub fn derive_nutrients(nutrients: &Nutrients) -> Nutrients {
     // Helper functions
     let get = |key: &str| -> Option<Quantity> { nutrients.get(key).cloned() };
     let priority =
@@ -45,7 +47,7 @@ pub fn derive_nutrients(nutrients: &rust::Nutrients) -> BTreeMap<String, Quantit
         // "Vitamin A, IU"
         // "Vitamin D (D2 + D3), International Units"
     // NLEA: Nutrition labeling and education act of 1990
-    let nutrients_haskell: BTreeMap<String, Quantity> = BTreeMap::from_iter([
+    let nutrients_haskell: Nutrients = BTreeMap::from_iter([
         // By summation is a newer and more accurate method than by difference.
         ("Carbohydrates",       priority(&[
                                     "Carbohydrate, by summation",

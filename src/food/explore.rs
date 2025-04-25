@@ -1,7 +1,7 @@
 //! Module for exploring the USDA food nutrient data.
 
 use crate::{
-    food::{rust::Nutrients, units::Unit},
+    food::{units::Unit, usda::Nutrients},
     lsl::algorithm::contains_any,
 };
 use std::collections::BTreeSet;
