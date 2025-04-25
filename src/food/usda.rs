@@ -121,7 +121,9 @@ fn update_nutrients(old: &mut Nutrients, new: Nutrients) {
     }
 }
 
-fn update_foods(old: &mut BTreeMap<String, Nutrients>, new: BTreeMap<String, Nutrients>) {
+pub type FoodDB = BTreeMap<String, Nutrients>;
+
+fn update_foods(old: &mut FoodDB, new: FoodDB) {
     for (name, new_nutrients) in new {
         match old.get_mut(&name) {
             Some(nutrients) => {
@@ -135,7 +137,7 @@ fn update_foods(old: &mut BTreeMap<String, Nutrients>, new: BTreeMap<String, Nut
 }
 
 /// Panics if the file for any reason can't be converted to foods.
-fn load_file<P: AsRef<Path> + ?Sized>(path: &P) -> BTreeMap<String, Nutrients> {
+fn load_file<P: AsRef<Path> + ?Sized>(path: &P) -> FoodDB {
     let display_path = path.as_ref().display();
     let content = std::fs::read_to_string(path)
         .unwrap_or_else(|_| panic!("couldn't read file {display_path}"));
@@ -149,7 +151,7 @@ fn load_file<P: AsRef<Path> + ?Sized>(path: &P) -> BTreeMap<String, Nutrients> {
 /// Some foods have entries in multiple datasets, and this way we use the most
 /// appropriate values from each.
 /// In the recommended datasets, there are no entries that differ only in capitalization.
-pub fn load_files<P: AsRef<Path>>(paths: &[P]) -> BTreeMap<String, Nutrients> {
+pub fn load_files<P: AsRef<Path>>(paths: &[P]) -> FoodDB {
     let mut acc = BTreeMap::new();
     for foods in paths.iter().map(load_file) {
         update_foods(&mut acc, foods);
@@ -168,7 +170,7 @@ pub trait HaskellDB {
     ) -> Food;
 }
 
-impl HaskellDB for BTreeMap<String, Nutrients> {
+impl HaskellDB for FoodDB {
     fn get_hs_food(
         &self,
         db_name: &str,
