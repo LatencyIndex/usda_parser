@@ -74,6 +74,20 @@ impl Quantity {
             _ => None,
         }
     }
+
+    pub fn add(&self, other: &Quantity) -> Option<Quantity> {
+        other.convert_to(&self.unit).map(|x| Quantity {
+            amount: x.amount + self.amount,
+            unit: x.unit,
+        })
+    }
+
+    pub fn mul(&self, x: &f64) -> Quantity {
+        Quantity {
+            amount: self.amount * x,
+            unit: self.unit.clone(),
+        }
+    }
 }
 
 impl fmt::Display for Quantity {
