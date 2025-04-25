@@ -1,5 +1,5 @@
 [package]
-name = "riddle_of_protein"
+name = "usda_parser"
 version = "0.1.0"
 edition = "2021"
 
