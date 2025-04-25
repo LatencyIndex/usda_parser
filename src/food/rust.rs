@@ -2,44 +2,9 @@
 
 use crate::food::units::{Quantity, Unit};
 use serde_json as sj;
-use std::{collections::BTreeMap, fmt};
+use std::collections::BTreeMap;
 
-pub struct Food {
-    pub name: String,
-    pub nutrients: BTreeMap<String, Quantity>,
-}
-
-impl PartialEq for Food {
-    fn eq(&self, other: &Self) -> bool {
-        self.name == other.name
-    }
-}
-
-impl Eq for Food {}
-
-impl PartialOrd for Food {
-    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
-        Some(self.cmp(other))
-    }
-}
-
-impl Ord for Food {
-    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
-        self.name.cmp(&other.name)
-    }
-}
-
-impl fmt::Display for Food {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let nstr: String = self
-            .nutrients
-            .iter()
-            .map(|(name, quantity)| format!("    {name}: {quantity}\n"))
-            .collect::<Vec<String>>()
-            .concat();
-        write!(f, "{}:\n{}", self.name, nstr)
-    }
-}
+pub type Nutrients = BTreeMap<String, Quantity>;
 
 fn as_nutrient(x: &sj::Value) -> Option<(String, Quantity)> {
     let amount = x["amount"].as_f64()?;
@@ -48,7 +13,8 @@ fn as_nutrient(x: &sj::Value) -> Option<(String, Quantity)> {
     Some((name, Quantity { amount, unit }))
 }
 
-pub fn to_food(x: &sj::Value) -> Option<Food> {
+/// Return the name and nutrient content of the food represented by the json.
+pub fn to_food(x: &sj::Value) -> Option<(String, Nutrients)> {
     let name = x["description"].as_str()?.trim().to_string();
     let mut nutrients = BTreeMap::new();
     for (k, v) in x["foodNutrients"]
@@ -63,5 +29,5 @@ pub fn to_food(x: &sj::Value) -> Option<Food> {
             nutrients.insert(k, v);
         }
     }
-    Some(Food { name, nutrients })
+    Some((name, nutrients))
 }

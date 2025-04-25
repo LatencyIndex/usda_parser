@@ -1,5 +1,6 @@
 use riddle_of_protein::food::{rust, usda};
 use std::{
+    collections::BTreeMap,
     fs,
     io::{BufWriter, Write},
 };
@@ -26,10 +27,11 @@ fn main() {
         // Unwrap because failure to create an iterator should panic
         .flat_map(|s| usda::JsonIter::new(s).unwrap())
         .filter_map(|json_val| rust::to_food(&json_val));
+    // Sort the foods by name
+    let foods: BTreeMap<String, rust::Nutrients> = foods.collect();
 
     let mut out = BufWriter::new(fs::File::create_new("data/processed/test.txt").unwrap());
-    for food in foods {
-        out.write_all(format!("{}\n", food.name).as_bytes())
-            .unwrap();
+    for (name, _nutrients) in foods {
+        out.write_all(format!("{}\n", name).as_bytes()).unwrap();
     }
 }

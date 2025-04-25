@@ -1,18 +1,16 @@
 //! Translate nutrients from how they are given by the USDA json, to how the Haskell code needs them.
 
-use crate::food::rust::Food as RustFood;
+use crate::food::rust;
 use crate::food::units::{add_opt_qs, Quantity, Unit::Microgram};
 use crate::lsl::algorithm::get_first;
 use std::collections::BTreeMap;
 
-// Use RustFood argument even though only nutrients are needed,
-// so that types statically ensure we pass the correct set of nutrients.
-pub fn derive_calories(food: &RustFood) -> Option<Quantity> {
+pub fn derive_calories(nutrients: &rust::Nutrients) -> Option<Quantity> {
     // The Atwater specific factors value should be more accurate than
     // the general factor version. But if available, choose plain 'Energy' - presumably
     // it has been chosen as most accurate by the analysts.
     get_first(
-        &food.nutrients,
+        nutrients,
         [
             "Energy",
             "Energy (Atwater General Factors)",
@@ -23,14 +21,11 @@ pub fn derive_calories(food: &RustFood) -> Option<Quantity> {
     .cloned()
 }
 
-// Use RustFood argument even though only nutrients are needed,
-// so that types statically ensure we pass the correct set of nutrients.
-pub fn derive_nutrients(food: &RustFood) -> BTreeMap<String, Quantity> {
+pub fn derive_nutrients(nutrients: &rust::Nutrients) -> BTreeMap<String, Quantity> {
     // Helper functions
-    let get = |key: &str| -> Option<Quantity> { food.nutrients.get(key).cloned() };
-    let priority = |keys: &[&str]| -> Option<Quantity> {
-        get_first(&food.nutrients, keys.iter().copied()).cloned()
-    };
+    let get = |key: &str| -> Option<Quantity> { nutrients.get(key).cloned() };
+    let priority =
+        |keys: &[&str]| -> Option<Quantity> { get_first(nutrients, keys.iter().copied()).cloned() };
     let weighted = |key: &str, weight: f64| -> Option<Quantity> { get(key).map(|x| x * weight) };
     // Weighted sum. Missing keys counted as zero. If no keys are found, returns None.
     // Panics if any quantity has incompatible units.
