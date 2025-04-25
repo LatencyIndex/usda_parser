@@ -2,7 +2,7 @@
 
 use crate::{
     algorithm::contains_any,
-    food::{units::Unit, Food},
+    food::{rust::Food, units::Unit},
 };
 use std::collections::BTreeSet;
 
