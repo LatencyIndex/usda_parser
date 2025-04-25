@@ -165,3 +165,53 @@ pub fn add_opt_qs(l: Option<Quantity>, r: Option<Quantity>) -> Option<Quantity> 
         (Some(l), Some(r)) => Some(l + r),
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::{Quantity, Unit::*};
+
+    // Panic if the quantities differ in unit or are not almost equal in value.
+    // Neither quantity may be zero.
+    fn almost_eq(l: &Quantity, r: &Quantity) {
+        if l.unit != r.unit {
+            panic!("{l} and {r} differ in units");
+        }
+        let rel_tol = 1e-3; // Accurate enough for tests, and coarse enough to avoid floating-point issues.
+        let rel_delta = l.amount / r.amount - 1.0;
+        if rel_delta.abs() > rel_tol {
+            panic!("{l} and {r} differ in amount");
+        }
+    }
+
+    #[test]
+    #[rustfmt::skip]
+    fn test_convert_to() {
+        let ug   = Quantity {amount: 1.0, unit: Microgram};
+        let mg   = Quantity {amount: 1.0, unit: Milligram};
+        let g    = Quantity {amount: 1.0, unit: Gram};
+        #[allow(non_snake_case)]
+        let kJ   = Quantity {amount: 1.0, unit: Kilojoule};
+        let kcal = Quantity {amount: 1.0, unit: Kilocalorie};
+
+        for k in [-1.5, -1.0, -0.5, 0.5, 1.0, 1.5] {
+            almost_eq(&(&  ug * k).convert_to(&Microgram),   &(&  ug * k * 1e+0));
+            almost_eq(&(&  ug * k).convert_to(&Milligram),   &(&  mg * k * 1e-3));
+            almost_eq(&(&  ug * k).convert_to(&Gram),        &(&   g * k * 1e-6));
+
+            almost_eq(&(&  mg * k).convert_to(&Microgram),   &(&  ug * k * 1e+3));
+            almost_eq(&(&  mg * k).convert_to(&Milligram),   &(&  mg * k * 1e+0));
+            almost_eq(&(&  mg * k).convert_to(&Gram),        &(&   g * k * 1e-3));
+
+            almost_eq(&(&   g * k).convert_to(&Microgram),   &(&  ug * k * 1e+6));
+            almost_eq(&(&   g * k).convert_to(&Milligram),   &(&  mg * k * 1e+3));
+            almost_eq(&(&   g * k).convert_to(&Gram),        &(&   g * k * 1e+0));
+
+            almost_eq(&(&  kJ * k).convert_to(&Kilojoule),   &(&  kJ * k * 1e+0));
+            almost_eq(&(&  kJ * k).convert_to(&Kilocalorie), &(&kcal * k * 0.23900574));
+
+            almost_eq(&(&kcal * k).convert_to(&Kilojoule),   &(&  kJ * k * 4.184));
+            almost_eq(&(&kcal * k).convert_to(&Kilocalorie), &(&kcal * k * 1e+0));
+        }
+
+    }
+}
