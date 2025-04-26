@@ -1,6 +1,6 @@
-# About
+# USDA parser
 
-Code for exploring and interpreting USDA json data of food nutrient content, and exporting it to Haskell.
+Code for exploring and interpreting USDA json data of food nutrient content, and exporting it to Haskell data types for use by Cookbook of Crom.
 
 Data source: https://fdc.nal.usda.gov/download-datasets.html
 
