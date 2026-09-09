@@ -147,7 +147,7 @@ fn load_file<P: AsRef<Path> + ?Sized>(path: &P) -> FoodDB {
         .collect()
 }
 
-/// Paths should be ordered from oldest to newest regarding their food analisys.
+/// Paths should be ordered from oldest to newest regarding their food analysis.
 /// Some foods have entries in multiple datasets, and this way we use the most
 /// appropriate values from each.
 /// In the recommended datasets, there are no entries that differ only in capitalization.
