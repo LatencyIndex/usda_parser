@@ -15,8 +15,8 @@ pub fn derive_calories(nutrients: &Nutrients) -> Option<Quantity> {
         nutrients,
         [
             "Energy",
-            "Energy (Atwater General Factors)",
             "Energy (Atwater Specific Factors)",
+            "Energy (Atwater General Factors)",
         ]
         .into_iter(),
     )
