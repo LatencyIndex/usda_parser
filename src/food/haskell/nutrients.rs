@@ -69,7 +69,7 @@ pub fn derive_nutrients(nutrients: &Nutrients) -> Nutrients {
                                     "High Molecular Weight Dietary Fiber (HMWDF)",
                                     "Low Molecular Weight Dietary Fiber (LMWDF)"]))),
         ("Protein",             get("Protein")), // Total, not necessarily complete.
-        // Has to be calculated form amino acid makeup.
+        // Has to be calculated from amino acid makeup.
         // However, it is not additive, so it is more meaningful to calculate it for an entire
         // meal/day, than for a single food.
         ("CompleteProtein",     None),
